@@ -26,6 +26,11 @@ pip 19.2.3 from /Users/<USERNAME>/Library/Python/3.7/lib/python/site-packages/pi
 
 ```
 $ pip install -r requirements.txt
+
+$ export SPOTIPY_USERNAME="<USER_NAME>"
+$ export SPOTIPY_CLIENT_ID="<CLIENT_ID>"
+$ export SPOTIPY_CLIENT_SECRET="<CLIENT_SECRET>"
+$ export SPOTIPY_REDIRECT_URI="<REDIRECT_URL>"
 ```
 
 ## Usage
