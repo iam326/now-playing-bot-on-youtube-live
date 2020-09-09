@@ -9,7 +9,7 @@ from youtube_data_api_client import YoutubeDataApiClient
 SPOTIFY_API_CLIENT_SCOPE = 'user-read-currently-playing'
 YOUTUBE_DATA_API_CLIENT_SCOPES = [
     'https://www.googleapis.com/auth/youtube.force-ssl']
-YOUTUBE_DATA_CLIENT_SECRETS_FILE = "client_secret.json"
+YOUTUBE_DATA_CLIENT_SECRETS_FILE = "client_secrets.json"
 
 
 def main():

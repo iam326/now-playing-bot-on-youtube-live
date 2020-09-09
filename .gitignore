@@ -1,3 +1,4 @@
 .cache-*
-client_secret.json
+client_secrets.json
+youtube-oauth2.json
 __pycache__/
