@@ -11,32 +11,36 @@ YOUTUBE_DATA_API_CLIENT_SCOPES = [
     'https://www.googleapis.com/auth/youtube.force-ssl']
 YOUTUBE_DATA_CLIENT_SECRETS_FILE = "client_secrets.json"
 
+WAIT_SEC = 60
+
 
 def main():
-  spotify = SpotifyApiClient(SPOTIFY_API_CLIENT_SCOPE)
-  youtube = YoutubeDataApiClient(
-      YOUTUBE_DATA_CLIENT_SECRETS_FILE, YOUTUBE_DATA_API_CLIENT_SCOPES)
+    spotify = SpotifyApiClient(SPOTIFY_API_CLIENT_SCOPE)
 
-  url = input('YouTube Live URL: ')
-  live_id = urllib.parse.urlparse(url).path[1:]
-  live_chat_id = youtube.get_live_chat_id(live_id)
-  prev_track = None
+    youtube = YoutubeDataApiClient(
+        YOUTUBE_DATA_CLIENT_SECRETS_FILE,
+        YOUTUBE_DATA_API_CLIENT_SCOPES)
 
-  try:
-    while True:
-      track = spotify.get_now_playing_track()
-      if track != None and track != prev_track:
-        message = '♪ {} / {} #nowplaying'.format(
-            track['title'], track['singer'])
-        youtube.send_message_to_live_chat(live_chat_id, message)
+    url = input('YouTube Live URL: ')
+    live_id = urllib.parse.urlparse(url).path[1:]
+    live_chat_id = youtube.get_live_chat_id(live_id)
+    prev_track = None
 
-        print(message)
-        prev_track = track
+    try:
+        while True:
+            track = spotify.get_now_playing_track()
+            if track is not None and track != prev_track:
+                message = '♪ {} / {} #nowplaying'.format(
+                    track['title'], track['singer'])
+                youtube.send_message_to_live_chat(live_chat_id, message)
 
-      sleep(60)
-  except KeyboardInterrupt:
-    pass
+                print(message)
+                prev_track = track
+
+            sleep(WAIT_SEC)
+    except KeyboardInterrupt:
+        pass
 
 
 if __name__ == '__main__':
-  main()
+    main()

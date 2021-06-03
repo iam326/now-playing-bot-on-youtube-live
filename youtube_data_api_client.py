@@ -1,66 +1,57 @@
 #!/usr/bin/env python3
 
-import httplib2
-import os
+import pickle
+import os.path
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
 
-from apiclient.discovery import build
-from oauth2client.client import flow_from_clientsecrets
-from oauth2client.file import Storage
-from oauth2client.tools import run_flow
+from google.auth.transport.requests import Request
 
-YOUTUBE_API_SERVICE_NAME = 'youtube'
-YOUTUBE_API_VERSION = 'v3'
-
-MISSING_CLIENT_SECRETS_MESSAGE = """
-WARNING: Please configure OAuth 2.0
-
-To make this sample run you will need to populate the client_secrets.json file
-found at:
-
-   %s
-
-with information from the API Console
-https://console.developers.google.com/
-
-For more information about the client_secrets.json file format, please visit:
-https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
-"""
+API_SERVICE_NAME = 'youtube'
+API_VERSION = 'v3'
 
 
 class YoutubeDataApiClient():
-  def __init__(self, client_secrets_file, scopes):
-    self.__client = self.get_youtube_data_api_client(
-        client_secrets_file, scopes)
 
-  def get_youtube_data_api_client(self, client_secrets_file, scopes):
-    message = MISSING_CLIENT_SECRETS_MESSAGE % os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                                            client_secrets_file))
-    flow = flow_from_clientsecrets(client_secrets_file,
-                                   scope=scopes,
-                                   message=message)
+    def __init__(self, client_secrets_file, scopes):
+        self.__client = self.get_authenticated_service(
+            client_secrets_file, scopes)
 
-    storage = Storage("youtube-oauth2.json")
-    credentials = storage.get()
+    def get_authenticated_service(self, client_secrets_file, scopes):
+        creds = None
+        # The file token.pickle stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
+        if os.path.exists('token.pickle'):
+            with open('token.pickle', 'rb') as token:
+                creds = pickle.load(token)
+        # If there are no (valid) credentials available, let the user log in.
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    client_secrets_file, scopes)
+                creds = flow.run_local_server(port=0)
+            # Save the credentials for the next run
+            with open('token.pickle', 'wb') as token:
+                pickle.dump(creds, token)
 
-    if credentials is None or credentials.invalid:
-      credentials = run_flow(flow, storage)
+        return build(API_SERVICE_NAME, API_VERSION, credentials=creds)
 
-    return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
-                 http=credentials.authorize(httplib2.Http()))
+    def get_live_chat_id(self, live_id):
+        live_broadcasts = self.__client.liveBroadcasts().list(
+            part='snippet', id=live_id, fields='items(snippet(liveChatId))').execute()
 
-  def get_live_chat_id(self, live_id):
-    live_broadcasts = self.__client.liveBroadcasts().list(
-        part='snippet', id=live_id).execute()
+        return live_broadcasts['items'][0]['snippet']['liveChatId']
 
-    return live_broadcasts['items'][0]['snippet']['liveChatId']
-
-  def send_message_to_live_chat(self, live_chat_id, message):
-    self.__client.liveChatMessages().insert(part='snippet', body={
-        'snippet': {
-            'liveChatId': live_chat_id,
-            'type': 'textMessageEvent',
-            'textMessageDetails': {
-                'messageText': message
+    def send_message_to_live_chat(self, live_chat_id, message):
+        self.__client.liveChatMessages().insert(part='snippet', body={
+            'snippet': {
+                'liveChatId': live_chat_id,
+                'type': 'textMessageEvent',
+                'textMessageDetails': {
+                    'messageText': message
+                }
             }
-        }
-    }).execute()
+        }).execute()
