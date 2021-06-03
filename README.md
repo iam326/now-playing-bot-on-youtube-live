@@ -1,32 +1,52 @@
 # now-playing-bot-on-youtube-live
 
-YouTube Live のチャットにて、現在 Spotify で再生中の曲を定期的に呟く BOT
+Spotify で再生中の曲を定期的に YouTube Live のチャットに書き込む Bot
+
 
 ## 前提条件
 
-* GCP アカウントが作成済みであること
-* Spotify Premium に登録済みであること
+- YouTube
+  - YouTube Live を行えるアカウントを持っていること
+
+- GCP
+  - YouTube Data API v3 が有効になっているプロジェクトが作成済みであること
+  - OAuth 同意画面を使用するためのアプリが登録済みであること
+  - YouTube Live を行うアカウントのメールアドレスがテストユーザーとして登録済みであること
+  - OAuth クライアント ID が作成済みであること
+
+- Spotify
+  - Spotify Premium に登録済みであること
+  - Spotify のアプリがインストール済みであること 
+  - Spotify for Developers でアプリを作成済みであること
+  - 上記アプリで Redirect URI が設定済みであること
 
 ## 環境
 
 ```
-$ sw_vers
-ProductName:	Mac OS X
-ProductVersion:	10.14.6
-BuildVersion:	18G103
+% sw_vers
+ProductName:	macOS
+ProductVersion:	11.2.3
+BuildVersion:	20D91
 
-$ python --version
-Python 3.7.5
+% python --version
+Python 3.9.5
 
-$ pip --version
-pip 19.2.3 from /Users/<USERNAME>/Library/Python/3.7/lib/python/site-packages/pip (python 3.7)
+% pip --version
+pip 21.1.1 from /Users/<USERNAME>/.anyenv/envs/pyenv/versions/3.9.5/lib/python3.9/site-packages/pip (python 3.9)
 ```
 
 ## Setup
 
 ```
-$ pip install -r requirements.txt
+$ pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+$ pip install spotipy
 
+or
+
+$ pip install -r requirements.txt
+```
+
+```
 $ export SPOTIPY_USERNAME="<USER_NAME>"
 $ export SPOTIPY_CLIENT_ID="<CLIENT_ID>"
 $ export SPOTIPY_CLIENT_SECRET="<CLIENT_SECRET>"
@@ -36,6 +56,9 @@ $ export SPOTIPY_REDIRECT_URI="<REDIRECT_URL>"
 ## Usage
 
 ```
-$ python main.py
-...
+% python main.py 
+YouTube Live URL: https://youtu.be/xxxxxxxxxxx
+♪ Love potion / BuZZ #nowplaying
+♪ CHOO SEXY / BuZZ #nowplaying
+♪ Temporary / w-inds. #nowplaying
 ```
