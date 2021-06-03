@@ -2,8 +2,11 @@
 
 Spotify で再生中の曲を定期的に YouTube Live のチャットに書き込む Bot
 
+## Demo
 
-## 前提条件
+![テーブル項目確認](./demo.png)
+
+## Prerequisites
 
 - YouTube
   - YouTube Live を行えるアカウントを持っていること
@@ -20,7 +23,7 @@ Spotify で再生中の曲を定期的に YouTube Live のチャットに書き�
   - Spotify for Developers でアプリを作成済みであること
   - 上記アプリで Redirect URI が設定済みであること
 
-## 環境
+## Environment
 
 ```
 % sw_vers
