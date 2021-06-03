@@ -1,4 +1,11 @@
-.cache-*
-client_secrets.json
+# YouTube
+token.pickle
 youtube-oauth2.json
+client_secrets.json
+
+# Spotify
+.cache-*
+
+# Other
 __pycache__/
+venv/
