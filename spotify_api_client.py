@@ -1,15 +1,24 @@
 #!/usr/bin/env python3
 
-import os
-
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
 
 class SpotifyApiClient():
-    def __init__(self, scope):
-        username = os.environ['SPOTIPY_USERNAME']
-        self.__auth_manager = SpotifyOAuth(username=username, scope=scope)
+    def __init__(
+            self,
+            username,
+            client_id,
+            client_secret,
+            redirect_uri,
+            scope):
+
+        self.__auth_manager = SpotifyOAuth(
+            username=username,
+            client_id=client_id,
+            client_secret=client_secret,
+            redirect_uri=redirect_uri,
+            scope=scope)
         self.__client = spotipy.Spotify(auth_manager=self.__auth_manager)
 
     def get_client(self):
@@ -24,4 +33,6 @@ class SpotifyApiClient():
         title = track['item']['name']
         singer = track['item']['artists'][0]['name']
 
-        return {'title': title, 'singer': singer}
+        return {
+            'title': title, 'singer': singer
+        }
